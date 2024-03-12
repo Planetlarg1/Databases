@@ -38,11 +38,13 @@ DO NOT REMOVE THE STATEMENT "CREATE VIEW v10MostSoldMusicGenres AS"
 ============================================================================
 */
 CREATE VIEW v10MostSoldMusicGenres AS
-SELECT Name, COUNT(Quantity)
-FROM genres
-JOIN tracks ON genres.GenreId = tracks.GenreId
-JOIN invoice_items ON tracks.TrackId = invoice_items.TrackId
-GROUP BY genres.Name;
+SELECT g.Name AS Name, SUM(ii.Quantity) AS Sales 
+FROM genres g
+JOIN tracks t ON g.genreId = t.GenreId
+JOIN invoice_items ii ON t.TrackId = ii.TrackId
+GROUP BY g.Name
+ORDER BY Sales DESC
+LIMIT 10;
 
 
 /*
@@ -52,9 +54,18 @@ DO NOT REMOVE THE STATEMENT "CREATE VIEW vTopAlbumEachGenre AS"
 ============================================================================
 */
 CREATE VIEW vTopAlbumEachGenre AS
---Remove this line and complete your query for Task 3 here
-
-
+SELECT
+   g.Name AS Genre,
+   a.Title AS Album,
+   ar.Name AS Artist,
+   SUM(ii.Quantity) AS Sales
+FROM genres g
+JOIN tracks t ON g.GenreId = t.GenreId
+JOIN albums a ON t.AlbumId = a.AlbumId
+JOIN artists ar ON a.ArtistId = ar.ArtistId
+JOIN invoice_items ii ON t.TrackId = ii.TrackId
+GROUP BY g.Name
+ORDER BY Genre;
 /*
 ============================================================================
 Task 4: Complete the query for v20TopSellingArtists
