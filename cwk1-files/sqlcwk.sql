@@ -38,7 +38,11 @@ DO NOT REMOVE THE STATEMENT "CREATE VIEW v10MostSoldMusicGenres AS"
 ============================================================================
 */
 CREATE VIEW v10MostSoldMusicGenres AS
---Remove this line and complete your query for Task 2 here
+SELECT Name, COUNT(Quantity)
+FROM genres
+JOIN tracks ON genres.GenreId = tracks.GenreId
+JOIN invoice_items ON tracks.TrackId = invoice_items.TrackId
+GROUP BY genres.Name;
 
 
 /*
