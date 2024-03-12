@@ -26,7 +26,9 @@ DO NOT REMOVE THE STATEMENT "CREATE VIEW vNoCustomerEmployee AS"
 ============================================================================
 */
 CREATE VIEW vNoCustomerEmployee AS
-
+SELECT EmployeeId, FirstName, LastName, Title
+FROM employees
+WHERE EmployeeId NOT IN (SELECT SupportRepId FROM customers);
 
 
 /*
