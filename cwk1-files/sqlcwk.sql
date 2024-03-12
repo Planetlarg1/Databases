@@ -64,8 +64,9 @@ JOIN tracks t ON g.GenreId = t.GenreId
 JOIN albums a ON t.AlbumId = a.AlbumId
 JOIN artists ar ON a.ArtistId = ar.ArtistId
 JOIN invoice_items ii ON t.TrackId = ii.TrackId
-GROUP BY g.Name
-ORDER BY Genre;
+GROUP BY g.Name;
+
+
 /*
 ============================================================================
 Task 4: Complete the query for v20TopSellingArtists
@@ -74,7 +75,17 @@ DO NOT REMOVE THE STATEMENT "CREATE VIEW v20TopSellingArtists AS"
 */
 
 CREATE VIEW v20TopSellingArtists AS
---Remove this line and complete your query for Task 4 here
+SELECT 
+   ar.Name AS Artist,
+   COUNT(DISTINCT a.AlbumId) AS TotalAlbum,
+   SUM(ii.Quantity) AS TrackSold
+FROM artists ar
+JOIN albums a ON ar.ArtistId = a.ArtistId
+JOIN tracks t ON a.AlbumId = t.AlbumId
+JOIN invoice_items ii ON t.TrackId = ii.TrackId
+GROUP BY ar.ArtistId
+ORDER BY TrackSold DESC
+LIMIT 20;
 
 
 /*
@@ -84,5 +95,28 @@ DO NOT REMOVE THE STATEMENT "CREATE VIEW vTopCustomerEachGenre AS"
 ============================================================================
 */
 CREATE VIEW vTopCustomerEachGenre AS
---Remove this line and complete your query for Task 5 here
-
+SELECT
+   g.name AS Genre,
+   c.FirstName || ' ' || c.LastName AS TopSpender,
+   ROUND(MAX(sp.TotalSpending), 2) AS TotalSpending
+FROM genres g
+JOIN tracks t ON g.GenreId = t.GenreId
+JOIN albums a ON t.AlbumId = a.AlbumId
+JOIN invoice_items ii ON t.TrackId = ii.TrackId
+JOIN invoices inv ON ii.InvoiceId = inv.InvoiceId
+JOIN customers c ON inv.CustomerId = c.CustomerId
+JOIN (
+    SELECT
+        g.GenreId,
+        c.CustomerId,
+        SUM(ii.Quantity * ii.UnitPrice) AS TotalSpending
+    FROM genres g
+    JOIN tracks t ON g.GenreId = t.GenreId
+    JOIN albums a ON t.AlbumId = a.AlbumId
+    JOIN invoice_items ii ON t.TrackId = ii.TrackId
+    JOIN invoices inv ON ii.InvoiceId = inv.InvoiceId
+    JOIN customers c ON inv.CustomerId = c.CustomerId
+    GROUP BY g.GenreId, c.CustomerId
+) AS sp ON g.GenreId = sp.GenreId AND c.CustomerId = sp.CustomerId
+GROUP BY g.GenreId
+ORDER BY g.Name;
