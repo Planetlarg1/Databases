@@ -19,6 +19,7 @@ DROP VIEW IF EXISTS vTopAlbumEachGenre;
 DROP VIEW IF EXISTS v20TopSellingArtists; 
 DROP VIEW IF EXISTS vTopCustomerEachGenre; 
 
+
 /*
 ============================================================================
 Task 1: Complete the query for vNoCustomerEmployee.
